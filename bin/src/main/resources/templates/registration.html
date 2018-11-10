@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en" layout:decorator="layouts/main">
+<head>
+<title>SFJ - Minden napra egy sztori</title>
+</head>
+<body>
+
+	<div layout:fragment="loginContent">
+
+		<form name="registration" th:action="@{/reg}" th:object="${user}" method="post" class="form-signin">
+			<h2 class="form-signin-heading">Kérlek regisztrálj</h2>
+				<input type="text" id="fullName" name="fullName" th:field="*{fullName}" class="form-control" placeholder="Teljes név"  /> 
+		 	    <input type="text" id="email" name="username" th:field="*{email}" class="form-control" placeholder="E-mail cím"  /> 
+			    <input type="password" id="password" name="password" th:field="*{password}"  class="form-control" placeholder="Jelszó" />
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Regisztráció</button>
+		</form>
+
+	</div>
+
+</body>
+</html>
