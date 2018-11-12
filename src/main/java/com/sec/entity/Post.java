@@ -3,6 +3,7 @@ package com.sec.entity;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
@@ -44,6 +45,14 @@ List<Like> likes;
 
 @OneToMany(orphanRemoval=true,fetch=FetchType.LAZY)
 List<Comment> comments;
+
+
+
+public Post() {
+	
+	
+	
+}
 
 public Long getPostID() {
 	return postID;
@@ -92,6 +101,10 @@ public List<Comment> getComments() {
 public void setComments(List<Comment> comments) {
 	this.comments = comments;
 }
+
+
+
+
 
 
 

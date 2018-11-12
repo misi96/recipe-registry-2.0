@@ -58,8 +58,8 @@ public abstract class Event {
 		
 		
 	}
-   
 
+	
 
 	public Event( long relatedPostID, User targetUser,String message) {
 		

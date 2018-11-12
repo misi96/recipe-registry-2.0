@@ -60,6 +60,7 @@ public class User implements UserDetails{
 	@OneToMany(cascade=CascadeType.ALL,mappedBy="targetUser")
 	List<Event> events;
 	
+	
 	@ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
 	@JoinTable( 
 		name = "users_roles", 

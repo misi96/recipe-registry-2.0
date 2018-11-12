@@ -16,8 +16,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class,CommentListener.class})
 @Table( name="comments" )
+
 public class Comment {
 
 	

@@ -5,9 +5,12 @@ import javax.persistence.Entity;
 
 @DiscriminatorValue("comment")
 @Entity
-public class CommentEvent extends Event{
+public class CommentedEvent extends Event{
 
-	public CommentEvent(long postID, User findByUserName) {
+	public CommentedEvent(long postID, User findByUserName) {
 		super(postID,findByUserName);
+		
 	}
+	
+
 }
