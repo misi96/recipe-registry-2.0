@@ -1,10 +1,11 @@
 package com.sec.controller;
 
-import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import com.sec.service.CommentService;
 
 
 @RestController
-@RequestMapping("/posts/{PostID}/comment")
+@RequestMapping("/posts/{PostID}/comments")
 
 public class CommentController {
 
@@ -37,7 +38,7 @@ public class CommentController {
 	
 	
 @PostMapping
-CommentDTO CommentPost(@PathVariable int PostID,@RequestBody CommentDTO commentDTO,@AuthenticationPrincipal User user) {
+CommentDTO CommentPost(@PathVariable int PostID,@RequestBody CommentDTO commentDTO) {
 	
 	
 	return commentService.AddCommentToPost(PostID,commentDTO);
@@ -47,10 +48,11 @@ CommentDTO CommentPost(@PathVariable int PostID,@RequestBody CommentDTO commentD
 }
 
 @GetMapping
-Page<CommentDTO> GetCommentList(@PathVariable int PostID,@RequestParam(value = "page", defaultValue="0") int page, @RequestParam( value = "size", defaultValue="30") int size) {
+Page<CommentDTO> GetCommentList(@PathVariable int PostID,@RequestParam(value = "page", defaultValue="0") int page, @RequestParam( value = "size", defaultValue="30") int size,
+		@SortDefault(sort="creationDate",direction = Sort.Direction.DESC)Sort sort) {
 	
 	
-	return commentService.GetCommentList(PostID,new PageRequest(page, size));
+	return commentService.GetCommentList(PostID,new PageRequest(page, size, sort));
 	
 	
 	

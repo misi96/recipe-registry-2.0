@@ -19,6 +19,9 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 
 
 
@@ -31,27 +34,57 @@ public class Post {
 @GeneratedValue(strategy = GenerationType.AUTO)
 long postID;
 
-@OneToOne
+@OneToOne(cascade=CascadeType.ALL)
 Postable postable;
 
 @CreatedDate
 Date creationDate;
 
+@ManyToOne
 @CreatedBy
 User createdBy;
 
-@OneToMany(orphanRemoval=true,fetch=FetchType.LAZY)
+@OneToMany(orphanRemoval=true,fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="post")
 List<Like> likes;
 
-@OneToMany(orphanRemoval=true,fetch=FetchType.LAZY)
+@OneToMany(orphanRemoval=true,fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="post")
 List<Comment> comments;
 
+@JsonProperty(access = Access.READ_ONLY)
+long likeCounter=0;
+@JsonProperty(access = Access.READ_ONLY)
+long commentCounter=0;
 
+
+public long getLikeCounter() {
+	return likeCounter;
+}
+
+public void setLikeCounter(long likeCounter) {
+	this.likeCounter = likeCounter;
+}
+
+public long getCommentCounter() {
+	return commentCounter;
+}
+
+public void setCommentCounter(long commentCounter) {
+	this.commentCounter = commentCounter;
+}
 
 public Post() {
 	
 	
 	
+}
+
+public Post(long postID) {
+	super();
+	this.postID = postID;
+}
+
+public Post(Postable postable) {
+	this.postable=postable;
 }
 
 public Long getPostID() {

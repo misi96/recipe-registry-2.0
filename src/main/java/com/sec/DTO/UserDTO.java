@@ -8,7 +8,7 @@ public class UserDTO {
 	
 	
 	private Long id;
-	private String fullName;
+	private String userName;
 	private Set<RoleDTO> roles;
 	
 	public Set<RoleDTO> getRoles() {
@@ -23,11 +23,12 @@ public class UserDTO {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getFullName() {
-		return fullName;
+	public String getUserName() {
+		return userName;
 	}
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
+	
 	
 }

@@ -2,9 +2,9 @@ package com.sec.entity;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -28,7 +28,7 @@ public class Comment {
 	@GeneratedValue
 	private Long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@CreatedBy
 	User createdBy;
 	
@@ -36,7 +36,7 @@ public class Comment {
 	Date creationDate;
 	
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.LAZY)
 	Post post;
 	
 	

@@ -22,6 +22,11 @@ public class Exceptionhandlers {
 		Json.addProperty("path", request.getContextPath());
 		Json.addProperty("description", request.getDescription(true));
 		Json.addProperty("user", request.getRemoteUser());
+		
+		for(StackTraceElement stack : ex.getStackTrace())
+		System.out.println(stack);
+		
+		
 		return Json.toString();
 		
 	}

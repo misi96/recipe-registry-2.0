@@ -27,7 +27,7 @@ public class LikeController {
 	LikeService likeService;
 	
 	@PostMapping
-	LikeDTO LikePost(@PathVariable int PostID,@AuthenticationPrincipal User user) {
+	LikeDTO LikePost(@PathVariable long PostID) {
 		
 		
 		

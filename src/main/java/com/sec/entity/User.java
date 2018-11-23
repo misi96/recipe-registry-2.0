@@ -1,5 +1,6 @@
 package com.sec.entity;
 
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -7,36 +8,33 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
-import javax.persistence.JoinColumn;
 
 @Entity
 @Table( name="users" )
 public class User implements UserDetails{
 
-	@Id @GeneratedValue
-	private Long id;
+	
+
+
+	@Id 
+	@GeneratedValue
+	private long id;
 	
 	@Column( unique=true, nullable=false )
 	private String email;
@@ -49,19 +47,25 @@ public class User implements UserDetails{
 	@Column( nullable=false ,length=30,unique =true)
 	private String userName;
 	
+	@JsonProperty(access = Access.READ_ONLY)
+	private Boolean locked = false;
 	
 	@JsonProperty(access = Access.READ_ONLY)
 	private String activation;
 	
 	@JsonProperty(access = Access.READ_ONLY)
+	@Column(name="eventIndicator")
+	private boolean eventIndicator = false;
+	
+	@JsonProperty(access = Access.READ_ONLY)
 	private Boolean enabled;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	@OneToMany(cascade=CascadeType.ALL,mappedBy="targetUser")
+	@OneToMany(cascade=CascadeType.REMOVE,mappedBy="targetUser",fetch=FetchType.LAZY)
 	List<Event> events;
 	
 	
-	@ManyToMany( cascade = CascadeType.ALL, fetch = FetchType.EAGER )
+	@ManyToMany( cascade = CascadeType.MERGE, fetch = FetchType.EAGER )
 	@JoinTable( 
 		name = "users_roles", 
 		joinColumns = {@JoinColumn(name="user_id")}, 
@@ -70,6 +74,15 @@ public class User implements UserDetails{
 	@JsonProperty(access = Access.READ_ONLY)
 	private Set<Role> roles = new HashSet<Role>();
 	
+	
+	public boolean getEventIndicator() {
+		return eventIndicator;
+	}
+
+	public void setEventIndicator(boolean eventIndicator) {
+		this.eventIndicator = eventIndicator;
+	}
+
 	public User() {}
 
 	public Long getId() {
@@ -146,6 +159,7 @@ public class User implements UserDetails{
 		Set<Role> roles = getRoles();
 		for (Role role : roles) {
 			authorities.add(new SimpleGrantedAuthority(role.getRole()));
+			System.out.println(role.getRole() + " rolesdebug ");
 		}
 		return authorities;
 	}
@@ -164,8 +178,17 @@ public class User implements UserDetails{
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
-		return true;
+		
+		return !locked;
+	}
+	
+
+	public Boolean getLocked() {
+		return locked;
+	}
+
+	public void setLocked(Boolean locked) {
+		this.locked = locked;
 	}
 
 	@Override

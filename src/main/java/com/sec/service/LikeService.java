@@ -9,23 +9,29 @@ import org.springframework.stereotype.Service;
 
 import com.sec.DTO.LikeDTO;
 import com.sec.entity.Like;
+import com.sec.entity.Post;
 import com.sec.entity.User;
 import com.sec.repo.LikeRepository;
+import com.sec.repo.PostRepository;
 
 @Service
-@Transactional
 public class LikeService {
 
 	@Autowired
 	LikeRepository likerepo;
-	
+	@Autowired
+	PostRepository postRepository;
 	
 	@Autowired
 	MappingService mappingService;
 	
-	public LikeDTO LikePost(int postID) {
+	public LikeDTO LikePost(long postID) {
 		
-		Like like = likerepo.save(new Like());
+		Post likedPost = postRepository.findOne(postID);
+		System.out.println(likedPost.getPostID() + " LIKE");
+		
+		Like like = likerepo.save(new Like(likedPost));
+		
 		
 		return mappingService.MapElements(like,LikeDTO.class);
 		
@@ -41,7 +47,7 @@ public class LikeService {
 		return mappingService.MapPages(Like.class, LikeDTO.class, likePage);
 		
 	}
-
+	@Transactional
 	public int DeleteLike(int postID, User user) {
 		
 		return likerepo.deleteByPost_PostIDAndCreatedBy(postID, user);

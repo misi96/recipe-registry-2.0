@@ -6,10 +6,13 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -17,21 +20,24 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @EntityListeners({AuditingEntityListener.class,LikeListener.class})
-@Table( name="likes" )
+@Table( name="likes" ,uniqueConstraints={@UniqueConstraint(columnNames = {"createdBy", "post"})})
 public class Like {
 	
 	@Id
 	@GeneratedValue
-	private Long id;
+	private long id;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@CreatedBy
+	@JoinColumn(name="createdBy")
 	User createdBy;
+	
 	
 	@CreatedDate
 	Date creationDate;
 	
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="post")
 	Post post;
 
 	public Long getId() {
@@ -41,7 +47,7 @@ public class Like {
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+	
 	public User getCreatedBy() {
 		return createdBy;
 	}
@@ -66,7 +72,14 @@ public class Like {
 		this.post = post;
 	}
 
-	
+	public Like(Post post) {
+		super();
+		this.post = post;
+	}
+
+	public Like() {
+		super();
+	}
 	
 
 }

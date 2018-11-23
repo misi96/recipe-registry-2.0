@@ -1,5 +1,7 @@
 package com.sec.config;
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ class SpringSecurityAuditorAware implements AuditorAware<User> {
 
 	@Autowired
 	UserRepository userRepo;
+	
   public User getCurrentAuditor() {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -21,7 +24,13 @@ class SpringSecurityAuditorAware implements AuditorAware<User> {
     if (authentication == null || !authentication.isAuthenticated()) {
       return null;
     }
-    
-    return userRepo.findByUserName((String) authentication.getPrincipal());
+    System.out.println(authentication.getName()+ "EZT KELL NÉZNI");
+    return (User) authentication.getPrincipal();
+	  
+	 
+	  
+	  
+	  
+	  
   }
 }

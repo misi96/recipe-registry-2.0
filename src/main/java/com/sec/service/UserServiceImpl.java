@@ -1,5 +1,7 @@
 package com.sec.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.slf4j.Logger;
@@ -10,11 +12,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.sec.DTO.EventDTO;
 import com.sec.DTO.UserDTO;
+import com.sec.entity.Event;
 import com.sec.entity.Role;
 import com.sec.entity.User;
+import com.sec.repo.EventRepository;
 import com.sec.repo.RoleRepository;
 import com.sec.repo.UserRepository;
 
@@ -29,6 +36,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	private final String USER_ROLE = "USER";
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	EventRepository eventRepository;
 	
 	@Autowired
     MappingService mappingService;
@@ -53,7 +65,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public String registerUser(User userToRegister) {
-		User userCheck = userRepository.findByEmail(userToRegister.getEmail());
+		User userCheck = userRepository.findByEmailOrUserName(userToRegister.getEmail(), userToRegister.getUsername());
 
 		if (userCheck != null)
 			return "alreadyExists";
@@ -68,7 +80,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		userToRegister.setEnabled(true); //amíg nem mükszik vmi email smtp server (egyébbként false)
 		userToRegister.setActivation(generateKey());
 		
-		
+		userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
 		
 		userRepository.save(userToRegister);
 		
@@ -80,9 +92,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public Page<UserDTO> ListUsers(Pageable pageable) {
 		Page<User> userPage = userRepository.findAll(pageable);
 		
-		//Page<user> -> Page<userDTO> !!!
 		
-	return null;
+		
+	return mappingService.MapPages(User.class, UserDTO.class, userPage);
 		
 	}
 
@@ -109,6 +121,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setActivation("");
 		userRepository.save(user);
 		return "ok";
+	}
+	
+	
+	@Transactional
+	@Override
+	public List<EventDTO> GetAndDeleteEventsOfUser(User user){
+		
+		System.out.println(user.getEventIndicator());
+		if(user.getEventIndicator()	==	true) {
+		List<Event> eventList = eventRepository.findByTargetUser(user);
+		List<EventDTO> eventDTOList = new ArrayList<>();
+		for(Event event	:eventList) {
+			
+			eventDTOList.add(mappingService.MapElements(event, EventDTO.class));
+			
+			
+		}
+		
+		eventRepository.deleteByTargetUser(user);
+		return eventDTOList;
+		}
+		
+		return null;
 	}
 	
 	

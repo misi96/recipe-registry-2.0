@@ -12,6 +12,10 @@ public interface CommentRepository extends PagingAndSortingRepository<Comment, L
 	
 	int deleteByPost_PostIDAndIdAndCreatedBy(long postID, long commentID, User user);
 
+	/*@Modifying
+	@Query("UPDATE Comment SET post = :bool WHERE postID = :postID")
+	void setPost(Post findOne,Post post);
+*/
 
 	
 	

@@ -4,19 +4,15 @@ package com.sec.entity;
 
 
 
-import javax.annotation.PostConstruct;
-import javax.persistence.PostPersist;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
 
 import com.sec.config.AutowireHelper;
 import com.sec.repo.EventRepository;
-import com.sec.repo.UserRepository;
+import com.sec.repo.PostRepository;
 import com.sec.service.TaggingService;
-import com.sec.service.UserService;
 
 
 public class CommentListener {
@@ -27,25 +23,38 @@ public class CommentListener {
 	@Autowired
 	EventRepository eventRepo;
 	
-	
+	@Autowired
+	PostRepository postRepository;
 	
 	
 	
 	@PrePersist
-	void  AfterComment(Comment comment) {
+	void  BeforeComment(Comment comment) {
 		
 		AutowireHelper.autowire(this, this.taggingService);
 		AutowireHelper.autowire(this, this.eventRepo);
-		
+		AutowireHelper.autowire(this, this.postRepository);
 		
 		Post post =comment.getPost();
-	
+		postRepository.SetCommentCounter(post.getCommentCounter() + 1, post.getPostID());
 			
 		eventRepo.save(new CommentedEvent(post.getPostID(),post.getCreatedBy()));
 		taggingService.CheckCommentForTags(comment);
 		
 		
 	}
+	@PreRemove
+	void  BeforeCommentDelete(Comment comment) {
+		
+		AutowireHelper.autowire(this, this.postRepository);
+		
+		Post post =comment.getPost();
+		postRepository.SetCommentCounter(post.getCommentCounter() - 1, post.getPostID());
+			
+		
+		
+	}
+	
 	
 	
 	

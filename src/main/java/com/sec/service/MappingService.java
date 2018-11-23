@@ -2,13 +2,16 @@ package com.sec.service;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.modelmapper.Provider;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 
 import com.sec.DTO.CommentDTO;
-import com.sec.DTO.PostDTO;
+import com.sec.DTO.PostableDTO;
+import com.sec.DTO.RecipeDTO;
 import com.sec.entity.Comment;
-import com.sec.entity.Post;
+import com.sec.entity.Postable;
+import com.sec.entity.Recipe;
 
 
 public class MappingService {
@@ -28,26 +31,25 @@ public class MappingService {
 				
 			}  });
 		
-		mapper.addMappings(new PropertyMap<PostDTO, Post>() {
-			
-			@Override
-			protected void configure() {
-				
-				skip().setCreationDate(null);
-				skip().setCreatedBy(null);
-				
-			}  });
 		
 		
-
+		mapper.createTypeMap(PostableDTO.class, Postable.class)
+		.include(RecipeDTO.class,Postable.class);
+		
+		mapper.typeMap(RecipeDTO.class,Postable.class).setProvider(new Provider<Postable>() {
+            public Postable get(ProvisionRequest<Postable> request) {
+            	System.out.println("typemap aktív");
+                return new Recipe((RecipeDTO)(request.getSource()));
+            }
+        });
+		
+		
+		
+		 
+		
 
 	}
 	
-	public ModelMapper GetMapper() {
-		
-		return mapper;
-		
-	}
 	
 	
 	public <T, S> T MapElements(S source, Class<T> destinationType) {

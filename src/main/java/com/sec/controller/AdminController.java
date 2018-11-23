@@ -1,42 +1,74 @@
 package com.sec.controller;
 
+import javax.mail.MessagingException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import com.sec.DTO.CircularEmail;
+import com.sec.service.AdminService;
 
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
-
+	
+	@Autowired
+	AdminService adminService;
+	
+	
+	
 	@DeleteMapping("/users/{userID}")
 	int DeleteUser(@PathVariable int userID) {
 		
 		
-		return 0; 
+		return adminService.deleteUser(userID); 
 		
 		
 	}
 	@DeleteMapping("/posts/{postID}")
-	int DeleteRecipe(@PathVariable int postID) {
+	int DeletePost(@PathVariable int postID) {
 		
 		
-		return 0; 
+		return adminService.deletePost(postID); 
+		
 		
 		
 	}
 	@PostMapping("users/{userID}/lock")
-	boolean EnableUser(@PathVariable int userID) {
+	boolean LockUser(@PathVariable int userID) {
 		
 		
-		return false; 
+		return adminService.LockUser(userID); 
 		
 		
 	}
 	@DeleteMapping("users/{userID}/lock")
-	boolean DisableUser(@PathVariable int userID) {
+	boolean UnLockUser(@PathVariable int userID) {
 		
 		
-		return false; 
+		return adminService.UnLockUser(userID); 
 		
 		
 	}
+	
+	@DeleteMapping("/pictures/{pictureID}")
+	int DeletePicture(@PathVariable long pictureID) {
+		
+		
+		return adminService.deletePicture(pictureID);
+		
+		
+	}
+	@PostMapping("/circularEmail")
+	boolean SendCircularEmail(@RequestBody CircularEmail circularEmail ) throws MessagingException {
+		
+		
+		return adminService.SendCircularEmail(circularEmail); 
+		
+		
+	}
+	
+	
+	
 	
 }
