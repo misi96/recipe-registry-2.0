@@ -58,6 +58,7 @@ public class CommentService {
 		RecipeDetails recDetails2 = new RecipeDetails("igy csináld ugy csináld");
 		RecipeDetails recDetails3 = new RecipeDetails("igy csináld ugy csináld");
 		RecipeDetails recDetails4 = new RecipeDetails("igy csináld ugy csináld");
+		recDetails1.setForHowManyPeople(2);
 		
 		List<Ingredient> ingredients1 = new ArrayList<>();
 		ingredients1.add(new Ingredient("paprika",2,"db",recDetails1));
@@ -81,6 +82,8 @@ public class CommentService {
 		Postrepo.save(new Post(new Recipe(recDetails2,"teszt")));
 		Postrepo.save(new Post(new Recipe(recDetails3 ,"teknős")));
 		Postrepo.save(new Post(new Recipe(recDetails4,"teknős")));
+		Postrepo.save(new Post(new Recipe(null,"teknős")));
+		Postrepo.save(new Post(new Recipe(null,"mákos galuska")));
 	}
 	
 	
@@ -91,14 +94,14 @@ public class CommentService {
 public CommentDTO AddCommentToPost(long PostID,CommentDTO commentDTO) {
 	    
 
-	Comment comment= mappingService.MapElements(commentDTO, Comment.class);
+	Comment comment	= mappingService.MapElements(commentDTO, Comment.class);
 	
-	//CommentRepo.setPost(Postrepo.findOne(PostID));
+	
 	comment.setPost(Postrepo.findOne(PostID));
-	CommentRepo.save(comment);
-		
-	System.out.println("DEBUG");
-		return mappingService.MapElements(comment, CommentDTO.class);
+	Comment savedComment = CommentRepo.save(comment);
+	
+	
+	return mappingService.MapElements(savedComment, CommentDTO.class);
 		 
 		
 		

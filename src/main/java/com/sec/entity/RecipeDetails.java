@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class RecipeDetails {
 
@@ -23,8 +26,39 @@ public class RecipeDetails {
 	@Column(length=512)
 	String guide;
 	
-	@OneToMany(fetch=FetchType.LAZY,cascade=CascadeType.ALL,mappedBy="recipeDetails")
-	List<Ingredient> ingredients =new ArrayList<>();
+	@OneToMany(fetch=FetchType.EAGER,cascade=CascadeType.ALL,mappedBy="recipeDetails")
+	@JsonManagedReference
+	List<Ingredient> ingredients =	new ArrayList<>();
+
+	int forHowManyPeople;
+	
+	@OneToOne(mappedBy="recipeDetails")
+	Recipe recipe;
+	
+	
+	public long getId() {
+		return id;
+	}
+
+
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+
+
+	public int getForHowManyPeople() {
+		return forHowManyPeople;
+	}
+
+
+
+	public void setForHowManyPeople(int forHowManyPeople) {
+		this.forHowManyPeople = forHowManyPeople;
+	}
+
+	
 	
 	@Override
 	public String toString() {
@@ -32,8 +66,7 @@ public class RecipeDetails {
 				+ "]";
 	}
 
-	@OneToOne(mappedBy="recipeDetails")
-	Recipe recipe;
+	
 	
 	public RecipeDetails(String guide, List<Ingredient> ingredients) {
 		super();

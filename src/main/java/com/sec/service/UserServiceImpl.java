@@ -4,11 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +24,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.nulabinc.zxcvbn.Strength;
+import com.nulabinc.zxcvbn.Zxcvbn;
 import com.sec.DTO.EventDTO;
 import com.sec.DTO.UserDTO;
 import com.sec.entity.Event;
@@ -28,13 +38,17 @@ import com.sec.repo.UserRepository;
 @Service
 public class UserServiceImpl implements UserService, UserDetailsService {
 	
+	
+
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
 
 	private UserRepository userRepository;
 
 	private RoleRepository roleRepository;
-
-	private final String USER_ROLE = "USER";
+	
+	private static final String ADMIN_ROLE = "ADMIN";
+	
+	private static final String USER_ROLE = "USER";
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -45,6 +59,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Autowired
     MappingService mappingService;
 	
+	@Autowired
+	PasswordValidator passwordValidator;
+	
+	@PostConstruct
+	void init() {
+		
+		roleRepository.save(new Role(USER_ROLE));
+		roleRepository.save(new Role(ADMIN_ROLE));
+		
+		
+	}
+	
+	@Autowired
+    EmailService emailService;
 	
 	@Autowired
 	public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
@@ -62,29 +90,52 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User findByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
-
+	
+	
 	@Override
-	public String registerUser(User userToRegister) {
-		User userCheck = userRepository.findByEmailOrUserName(userToRegister.getEmail(), userToRegister.getUsername());
-
+	public String registerUser(User userToRegister,HttpServletRequest request) throws Exception {
+		
+		
+		
+		User userCheck = userRepository.findByEmailOrUserName(userToRegister.getEmail(), userToRegister.getUserName());
+		
 		if (userCheck != null)
 			return "alreadyExists";
-
-		Role userRole = roleRepository.findByRole(USER_ROLE);
-		if (userRole != null) {
-			userToRegister.getRoles().add(userRole);
-		} else {
-			userToRegister.addRoles(USER_ROLE);
+		
+		
+		passwordValidator.validate(userToRegister.getPassword());
+		
+		
+		
+		String base = "";
+		
+		
+		
+		if(request != null) {  //csak tesztelés alatt kell valszeg
+		StringBuffer url = request.getRequestURL();
+		String uri = request.getRequestURI();
+		String ctx = request.getContextPath();
+		base = url.substring(0, url.length() - uri.length() + ctx.length()) + "/";
 		}
 		
-		userToRegister.setEnabled(true); //amíg nem mükszik vmi email smtp server (egyébbként false)
-		userToRegister.setActivation(generateKey());
+		Role userRole = roleRepository.findByRole(USER_ROLE);
 		
+		userToRegister.getRoles().add(userRole);
+		
+		
+		
+		userToRegister.setEnabled(false); //amíg nem mükszik vmi email smtp server true (egyébbként false)
+		String activationKey =generateKey();
+		userToRegister.setActivation(activationKey);
+		
+		String activationLink	= base + "activation/" + activationKey;
+		
+		emailService.sendMessage(userToRegister.getEmail(), activationLink);
 		userToRegister.setPassword(passwordEncoder.encode(userToRegister.getPassword()));
 		
 		userRepository.save(userToRegister);
 		
-
+		
 		return "ok";
 	}
 	
@@ -108,19 +159,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		String toReturn = new String(word);
 		log.debug("random code: " + toReturn);
-		return new String(word);
+		return toReturn;
     }
 
 	@Override
-	public String userActivation(String code) {
+	public ResponseEntity<String> userActivation(String code) {
 		User user = userRepository.findByActivation(code);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location", "/login");
+		
 		if (user == null)
-		    return "noresult";
+		    return new ResponseEntity<>("Noresult",headers,HttpStatus.FOUND);
 		
 		user.setEnabled(true);
 		user.setActivation("");
 		userRepository.save(user);
-		return "ok";
+		
+		return new ResponseEntity<>("Activated",headers,HttpStatus.FOUND);
 	}
 	
 	
@@ -128,8 +183,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	@Override
 	public List<EventDTO> GetAndDeleteEventsOfUser(User user){
 		
-		System.out.println(user.getEventIndicator());
-		if(user.getEventIndicator()	==	true) {
+		boolean hasEvents = userRepository.UserHasEvents(user.getId()); //nem az adatbázisbol szedi ki!a saját ConcurentHashMap-ből
+		if(hasEvents) {
+		
 		List<Event> eventList = eventRepository.findByTargetUser(user);
 		List<EventDTO> eventDTOList = new ArrayList<>();
 		for(Event event	:eventList) {
@@ -142,8 +198,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		eventRepository.deleteByTargetUser(user);
 		return eventDTOList;
 		}
-		
+	
 		return null;
+	
 	}
 	
 	

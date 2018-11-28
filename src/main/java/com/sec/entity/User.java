@@ -17,7 +17,9 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,7 +60,7 @@ public class User implements UserDetails{
 	private boolean eventIndicator = false;
 	
 	@JsonProperty(access = Access.READ_ONLY)
-	private Boolean enabled;
+	private boolean enabled = false;
 	
 	@JsonProperty(access = Access.READ_ONLY)
 	@OneToMany(cascade=CascadeType.REMOVE,mappedBy="targetUser",fetch=FetchType.LAZY)
@@ -150,7 +152,7 @@ public class User implements UserDetails{
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", email=" + email + ", password=" + password + "]";
+		return "User [id=" + id + ", email=" + email + " userName =" + userName + " ]";
 	}
 
 	@Override
@@ -167,7 +169,7 @@ public class User implements UserDetails{
 	@Override
 	public String getUsername() {
 		
-		return this.email;
+		return this.email; 
 	}
 
 	@Override
@@ -193,20 +195,21 @@ public class User implements UserDetails{
 
 	@Override
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return true;
+	
+		return enabled;
 	}
 
 	public void setEvents(List<Event> event) {
 		this.events =event;
 		
 	}
+	
 
 	
 }

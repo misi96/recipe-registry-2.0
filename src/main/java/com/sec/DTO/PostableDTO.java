@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	  })
 public class PostableDTO {
 	
-	private Long id;
-	private PostType postType;
+	 Long id;
+	 PostType postType;
 	
 	public Long getId() {
 		return id;

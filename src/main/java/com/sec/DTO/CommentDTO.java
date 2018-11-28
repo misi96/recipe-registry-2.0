@@ -8,6 +8,7 @@ public class CommentDTO {
 	String content;
 	UserDTO createdBy;
 	Date creationDate;
+	
 	public long getId() {
 		return id;
 	}

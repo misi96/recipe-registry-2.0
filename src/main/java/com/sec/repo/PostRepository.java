@@ -20,7 +20,9 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long>{
     Page<Post> findPosts(Pageable pageable);
 	*/
 	
+	@Modifying
 	int deleteByPostID(long postID);	//adminoknak
+	@Modifying
 	int deleteByPostIDAndCreatedBy(long postID,User user);
 	
 	@Modifying
@@ -36,6 +38,16 @@ public interface PostRepository extends PagingAndSortingRepository<Post, Long>{
 			+ " (SELECT ingr.id FROM Ingredient ingr WHERE ingr.name NOT IN :ingredients)) ")
 	Page<Post> GetRecipesWithIngredients(@Param("ingredients")List<String> ingredients,Pageable pageable);
 	
+	
+	@Query("SELECT post FROM Post post WHERE post.postable.post_type = 'recipe' AND post.postable.postableID IN " 
+			+ "(SELECT rec.postableID FROM Recipe rec WHERE rec.name = :name)")
+	Page<Post> GetRecipesByName(@Param("name")String name, Pageable pageable);
+	
+	
+	Page<Post> findByPostIDIn(Iterable<Long> IDs,Pageable pageable);
+	
+	
+	Page<Post> findByCreatedById(long userID,Pageable pageable);
 	
 	
 }

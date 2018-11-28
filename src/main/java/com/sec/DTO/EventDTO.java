@@ -8,7 +8,14 @@ public class EventDTO {
 	String message;
 	UserDTO sourceUser;
 	Date date;
+	String event_type;
 	
+	public String getEvent_type() {
+		return event_type;
+	}
+	public void setEvent_type(String event_type) {
+		this.event_type = event_type;
+	}
 	public long getRelatedPostID() {
 		return relatedPostID;
 	}

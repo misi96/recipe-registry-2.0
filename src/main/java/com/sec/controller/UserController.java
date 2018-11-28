@@ -2,13 +2,18 @@ package com.sec.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.spi.http.HttpContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,10 +39,10 @@ public class UserController {
 	
 	
 	@PostMapping("/registration")
-    public String reg(@RequestBody User user) {
+    public String reg(@RequestBody User user,HttpServletRequest request) throws Exception {
 		
 		
-        return userService.registerUser(user);
+        return userService.registerUser(user,request);
         
         
         
@@ -58,5 +63,16 @@ public class UserController {
 		return userService.GetAndDeleteEventsOfUser(user);
 		
 	}
+	@GetMapping("/activation/{activationKey}")
+	ResponseEntity<String> ActivateUser(@PathVariable String activationKey){
+		
+		
+		return userService.userActivation(activationKey);
+		
+		
+	}
+	
+	
+	
 	
 }

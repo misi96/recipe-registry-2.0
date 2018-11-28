@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import com.sec.repo.RecipeDetailsRepository;
 import com.sec.repo.RecipeRepository;
 import com.sec.entity.Post;
 import com.sec.entity.Postable;
+import com.sec.entity.Recipe;
 import com.sec.entity.User;
 @Service
 public class PostService {
@@ -41,24 +43,29 @@ public PostDTO Post(PostableDTO postableDTO){
 	Postable postable =mapper.MapElements(postableDTO, Postable.class);
 	
 	
-	postableRepository.save(postable);
-	
+	//postableRepository.save(postable);
+
 	Post post = new Post(postable);
 	
 	
-	postRepo.save(post);
-	
-	return null;
+	Post savedPost = postRepo.save(post);
+	System.out.println(((Recipe)savedPost.getPostable()).getPost_type()+ "Posttype ");
+	return mapper.MapElements(savedPost,PostDTO.class);
 	
 	
 	
 }
-public Page<PostDTO> ListPosts(Pageable pageable) {
+public Page<PostDTO> GetPosts(Pageable pageable,List<Long> IDs) {
 	
-	
-	
+	if(IDs == null) {
 	return mapper.MapPages(Post.class, PostDTO.class,postRepo.findAll(pageable));
 	
+	}
+	else {
+	
+		return mapper.MapPages(Post.class, PostDTO.class,postRepo.findByPostIDIn(IDs, pageable));
+		
+	}
 }
 
 
@@ -68,7 +75,7 @@ public Map<String, Long> GetRecipeNamesStartingWith(String startingWith) {
 	
 	
 }
-
+@Transactional
 public int DeletePost(int postID, User user) {
 	
 	
@@ -79,11 +86,25 @@ public int DeletePost(int postID, User user) {
 
 public Page<PostDTO> GetRecipesWithIngredients(List<String> ingredients, PageRequest pageRequest) {
 	
-	Page<Post> recipePage = postRepo.GetRecipesWithIngredients(ingredients, pageRequest);
+	Page<Post> PostPage = postRepo.GetRecipesWithIngredients(ingredients, pageRequest);
 	
-	return mapper.MapPages(Post.class, PostDTO.class, recipePage);
+	return mapper.MapPages(Post.class, PostDTO.class, PostPage);
 	
 	
+}
+public Page<PostDTO> GetRecipesByName(String name, Pageable pageable) {
+	Page<Post> PostPage = postRepo.GetRecipesByName(name,pageable);
+	
+	
+	return mapper.MapPages(Post.class, PostDTO.class, PostPage);
+	
+}
+public Page<PostDTO> GetPostsOfUser(Pageable pageable, Long userID) {
+	
+	
+	Page<Post> PostPage = postRepo.findByCreatedById(userID, pageable);
+	
+	return mapper.MapPages(Post.class, PostDTO.class, PostPage);
 }
 
 

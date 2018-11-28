@@ -55,7 +55,7 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom{
 		String recipeName = recipe.getName();
 		Long oldCounter = namesTreeMap.get(recipeName);
 		if (oldCounter != null)
-		namesTreeMap.put( recipeName, oldCounter++);
+		namesTreeMap.put( recipeName, ++oldCounter);
 		else {
 			namesTreeMap.put( recipeName, 1L);
 	}
@@ -64,12 +64,13 @@ public class RecipeRepositoryImpl implements RecipeRepositoryCustom{
 	
 	@PreRemove
 	public void deleteName(Recipe recipe) {
-
+		
 		if(initialized==true) {
 		String recipeName = recipe.getName();
-		long oldCounter = namesTreeMap.get(recipeName);
-		if(oldCounter != 1 )
-		namesTreeMap.put(recipe.getName(),--oldCounter);
+		Long oldCounter = namesTreeMap.get(recipeName);
+		if(oldCounter != 1 ) 
+		namesTreeMap.put(recipeName,--oldCounter);
+		
 		else {
 			
 			namesTreeMap.remove(recipeName);

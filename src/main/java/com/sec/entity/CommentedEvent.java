@@ -11,6 +11,6 @@ public class CommentedEvent extends Event{
 		super(postID,findByUserName);
 		
 	}
-	
+	public CommentedEvent() {};
 
 }

@@ -9,8 +9,8 @@ public class RecipeDTO extends PostableDTO{
 	RecipeDetails recipeDetails;
 	boolean vegetarian;
 	int time;
-	private boolean hasMainPicFlag;
-	
+	boolean hasMainPicFlag;
+	String post_type;
 	
 	
 
@@ -38,7 +38,7 @@ public class RecipeDTO extends PostableDTO{
 		this.recipeDetails = recipeDetails;
 	}
 
-	String post_type;
+	
 
 	public String getPost_type() {
 		return post_type;

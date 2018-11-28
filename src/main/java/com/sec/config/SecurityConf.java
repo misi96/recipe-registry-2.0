@@ -3,6 +3,7 @@ package com.sec.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.sec.service.PasswordValidator;
+import com.sec.service.PasswordValidatorZxcvbn;
 
 @EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true )
 @Configuration
@@ -45,6 +48,12 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 	}
 	
 	
+	@Bean
+	@Primary
+	public PasswordValidator PasswordValidator() {
+	    return new PasswordValidatorZxcvbn();
+	}
+	
 	@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authProvider());
@@ -57,12 +66,11 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/admin/**").hasAuthority("ADMIN")
 				.antMatchers("/registration").permitAll()
-				.antMatchers("/reg").permitAll()
 				.antMatchers("/activation/**").permitAll()
 				.antMatchers("/").hasAuthority("USER")
-				.anyRequest().authenticated()
 				.antMatchers("/console/**").permitAll()
 				.antMatchers("/teszt").permitAll()
+				.anyRequest().authenticated()
 				.and()
 			.formLogin().and()
 			.logout()

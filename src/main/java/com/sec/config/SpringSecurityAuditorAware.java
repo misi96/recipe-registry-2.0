@@ -24,7 +24,7 @@ class SpringSecurityAuditorAware implements AuditorAware<User> {
     if (authentication == null || !authentication.isAuthenticated()) {
       return null;
     }
-    System.out.println(authentication.getName()+ "EZT KELL NÉZNI");
+    
     return (User) authentication.getPrincipal();
 	  
 	 

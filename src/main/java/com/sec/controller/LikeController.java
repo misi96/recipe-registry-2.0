@@ -27,7 +27,7 @@ public class LikeController {
 	LikeService likeService;
 	
 	@PostMapping
-	LikeDTO LikePost(@PathVariable long PostID) {
+	LikeDTO LikePost(@PathVariable long PostID) throws Exception {
 		
 		
 		
@@ -49,7 +49,7 @@ public class LikeController {
 		
 	}
 	@DeleteMapping
-	int DeleteLike(@PathVariable int PostID,@AuthenticationPrincipal User user) {
+	int DeleteLike(@PathVariable long PostID,@AuthenticationPrincipal User user) {
 		
 		
 		return likeService.DeleteLike(PostID,user);

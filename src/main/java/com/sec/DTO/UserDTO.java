@@ -7,7 +7,7 @@ import java.util.Set;
 public class UserDTO {
 	
 	
-	private Long id;
+	private long id;
 	private String userName;
 	private Set<RoleDTO> roles;
 	

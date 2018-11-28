@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import com.sec.entity.Role;
 import com.sec.entity.User;
 
-public interface UserRepository extends PagingAndSortingRepository<User, Long> {
+public interface UserRepository extends PagingAndSortingRepository<User, Long>,UserRepositoryCustom {
 	
 	//@Cacheable(key = "#userName", value="Users",condition = "#userName != null")
 	User findByUserName(String userName);

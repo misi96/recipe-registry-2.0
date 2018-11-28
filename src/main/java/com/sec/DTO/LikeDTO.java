@@ -5,7 +5,7 @@ import java.util.Date;
 public class LikeDTO {
 	
 	
-	private Long id;
+	private long id;
 	private UserDTO createdBy;
 	Date creationDate;
 	

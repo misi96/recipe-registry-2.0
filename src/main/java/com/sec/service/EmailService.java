@@ -3,6 +3,7 @@ package com.sec.service;
 import java.util.List;
 
 import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.sec.DTO.CircularEmail;
@@ -27,17 +29,25 @@ public class EmailService {
 	private JavaMailSender javaMailSender;
 
 
-	public void sendMessage(String email) {
-		SimpleMailMessage message = null;
+	public void sendMessage(String email,String activationlink) {
 		
+		MimeMessage message = javaMailSender.createMimeMessage();
+		
+		MimeMessageHelper helper = null;
+
 		try {
-			message = new SimpleMailMessage();
-			message.setFrom(MESSAGE_FROM);
-			message.setTo(email);
-			message.setSubject("Sikeres regisztrálás");
-			message.setText("Kedves " + email + "! \n \n Köszönjük, hogy regisztráltál az oldalunkra!");
-			javaMailSender.send(message);
 			
+			helper =  new MimeMessageHelper(message, false, "utf-8");
+			
+			helper.setFrom(MESSAGE_FROM);
+			helper.setTo(email);
+			helper.setSubject("Sikeres regisztrálás");
+			message.setText("Kedves " + email + "! <br> <br> Köszönjük, hogy regisztráltál az oldalunkra!" 
+					+ "<br> Aktivációs link: " +  "<a href=\"" + activationlink  +"\">Aktiválás!</a>","UTF-8", "html");
+			
+			
+			javaMailSender.send(message);
+		
 		} catch (Exception e) {
 			log.error("Hiba e-mail küldéskor az alábbi címre: " + email + "  " + e);
 		}

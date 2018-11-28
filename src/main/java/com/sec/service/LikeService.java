@@ -25,30 +25,34 @@ public class LikeService {
 	@Autowired
 	MappingService mappingService;
 	
-	public LikeDTO LikePost(long postID) {
+	public LikeDTO LikePost(long postID) throws Exception {
 		
 		Post likedPost = postRepository.findOne(postID);
 		System.out.println(likedPost.getPostID() + " LIKE");
-		
-		Like like = likerepo.save(new Like(likedPost));
-		
+		Like like = null;
+		try {
+		like = likerepo.save(new Like(likedPost));
+		}
+		catch (Exception e) {
+			throw new Exception("alreadyLiked");
+		}
 		
 		return mappingService.MapElements(like,LikeDTO.class);
 		
 		
 	}
 
-	public Page<LikeDTO> GetLikes(int postID,Pageable page) {
+	public Page<LikeDTO> GetLikes(long postID,Pageable page) {
 		
 		
-		Page<Like> likePage = likerepo.findAll(page);
+		Page<Like> likePage = likerepo.findByPost_PostID(postID,page);
 		
 		
 		return mappingService.MapPages(Like.class, LikeDTO.class, likePage);
 		
 	}
 	@Transactional
-	public int DeleteLike(int postID, User user) {
+	public int DeleteLike(long postID, User user) {
 		
 		return likerepo.deleteByPost_PostIDAndCreatedBy(postID, user);
 		

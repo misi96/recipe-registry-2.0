@@ -46,9 +46,21 @@ public abstract class Event {
 	@CreatedDate
 	Date date;
 	
+	@Column(name="event_type",insertable = false, updatable = false)
+	String event_type;
 	
-	
-	
+
+
+
+	public String getEvent_type() {
+		return event_type;
+	}
+
+
+
+	public void setEvent_type(String event_type) {
+		this.event_type = event_type;
+	}
 
 
 

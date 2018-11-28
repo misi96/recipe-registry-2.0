@@ -49,10 +49,20 @@ public class PostController {
 		
 	}
 	@GetMapping("/posts")
-	Page<PostDTO> ListPosts(@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20") int size,
-			@SortDefault(sort="likeCounter",direction = Sort.Direction.DESC)Sort sort){
-
-		return postService.ListPosts(new PageRequest(page, size,sort));
+	Page<PostDTO> GetPosts(@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20") int size,
+			@SortDefault(sort="likeCounter",direction = Sort.Direction.DESC)Sort sort,@RequestParam(value = "PostIDs", required = false) List<Long> PostIDs){
+		
+		return postService.GetPosts(new PageRequest(page, size,sort),PostIDs);
+		
+		
+		
+		
+	}
+	@GetMapping("/posts/user/{userID}")
+	Page<PostDTO> GetPostsOfUser(@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20") int size,
+			@SortDefault(sort="likeCounter",direction = Sort.Direction.DESC)Sort sort,@PathVariable long userID){
+		
+		return postService.GetPostsOfUser(new PageRequest(page, size,sort),userID);
 		
 		
 		
@@ -60,8 +70,9 @@ public class PostController {
 	}
 	
 	
+	
 	@GetMapping("/recipes/names")
-	Map<String, Long> NamesStartingWith(@RequestParam String startingWith){
+	Map<String, Long> GetNamesStartingWith(@RequestParam(value = "startingWith", defaultValue="") String startingWith){
 		return postService.GetRecipeNamesStartingWith(startingWith);
 		
 		
@@ -93,7 +104,7 @@ public class PostController {
 	
 	
 	@GetMapping("/posts/filter")
-	Page<PostDTO> ListFilteredPost(@RequestBody PostFilter postFilter,@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20" ) int size){
+	Page<PostDTO> GetFilteredPost(@RequestBody PostFilter postFilter,@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20" ) int size){
 		
 		
 		return null;
@@ -109,6 +120,13 @@ public class PostController {
 		
 		
 	}
+	@GetMapping("recipes/{name}")
+	Page<PostDTO> GetRecipesByName(@PathVariable String name,@RequestParam(value = "page", defaultValue="0") int page, @RequestParam(value = "size", defaultValue="20" ) int size) {
+		
+		
+		return postService.GetRecipesByName(name,new PageRequest(page, size));
+	}
+	
 	
 	
 }

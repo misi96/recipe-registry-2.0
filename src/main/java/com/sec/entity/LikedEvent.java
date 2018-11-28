@@ -10,4 +10,6 @@ public class LikedEvent extends Event{
 	public LikedEvent(long postID, User findByUserName) {
 		super(postID,findByUserName);
 	}
+	
+	public LikedEvent() {};
 }

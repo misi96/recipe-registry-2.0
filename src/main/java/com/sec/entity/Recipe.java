@@ -27,8 +27,41 @@ import com.sec.repo.RecipeRepositoryImpl;
 public class Recipe extends Postable {
 	
 	@Column(name="post_type",insertable = false, updatable = false)
-	String post_type;
+	String post_type = "recipe";
 
+	
+	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
+	@JsonProperty(access = Access.WRITE_ONLY)
+	RecipeDetails recipeDetails;
+	
+	@Column
+	String name;
+	
+	
+	boolean vegetarian;
+	
+	int time;
+	
+	
+	@JsonIgnore
+	@CreatedBy
+	@ManyToOne
+	User createdBy; 	//redundáns,de main pic. upload-nál jól jön
+	
+	
+	
+	
+	
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="recipe")
+	@JsonIgnore
+	List<AttachedRecipePicture> attachedRecipePictures;
+	
+	
+	
+	@JsonProperty(access = Access.READ_ONLY)
+	boolean hasMainPicFlag = false;
+	
+	
 	public String getPost_type() {
 		return post_type;
 	}
@@ -36,11 +69,6 @@ public class Recipe extends Postable {
 	public void setPost_type(String post_type) {
 		this.post_type = post_type;
 	}
-	
-	
-	@OneToOne(fetch=FetchType.LAZY,cascade=CascadeType.ALL)
-	@JsonProperty(access = Access.WRITE_ONLY)
-	RecipeDetails recipeDetails;
 	
 	
 	
@@ -52,19 +80,6 @@ public class Recipe extends Postable {
 		this.createdBy = createdBy;
 	}
 	
-	@JsonIgnore
-	@CreatedBy
-	@ManyToOne
-	User createdBy; 	//redundáns,de main pic. upload-nál jól jön
-	
-	
-	
-	@OneToMany(fetch=FetchType.LAZY,mappedBy="recipe")
-	@JsonIgnore
-	List<AttachedRecipePicture> attachedRecipePictures;
-	
-	
-
 
 
 
@@ -114,15 +129,12 @@ public class Recipe extends Postable {
 		
 		
 	}
+	
+	
+	
 
 
-	@Column
-	String name;
-	
-	
-	boolean vegetarian;
-	
-	
+
 	public String getName() {
 		return name;
 	}
@@ -156,9 +168,6 @@ public class Recipe extends Postable {
 	}
 
 
-	int time;
-
-	private boolean hasMainPicFlag = false;
 
 	public boolean getHasMainPicFlag() {
 		return hasMainPicFlag;
@@ -167,7 +176,7 @@ public class Recipe extends Postable {
 	public void setHasMainPicFlag(boolean hasMainPicFlag) {
 		this.hasMainPicFlag = hasMainPicFlag;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "Recipe [post_type=" + post_type + ", recipeDetails=" + recipeDetails + ", createdBy=" + createdBy

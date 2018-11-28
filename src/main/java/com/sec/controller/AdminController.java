@@ -51,14 +51,24 @@ public class AdminController {
 		
 	}
 	
-	@DeleteMapping("/pictures/{pictureID}")
-	int DeletePicture(@PathVariable long pictureID) {
+	@DeleteMapping("/pictures/attached/{pictureID}")
+	int DeleteAttachedPicture(@PathVariable long pictureID) {
 		
 		
-		return adminService.deletePicture(pictureID);
+		return adminService.deleteAttachedPicture(pictureID);
 		
 		
 	}
+	@DeleteMapping("/pictures/main/{postableID}")
+	int DeleteMainPicture(@PathVariable long postableID) {
+		
+		
+		return adminService.deleteMainPicture(postableID);
+		
+		
+	}
+	
+	
 	@PostMapping("/circularEmail")
 	boolean SendCircularEmail(@RequestBody CircularEmail circularEmail ) throws MessagingException {
 		

@@ -19,9 +19,10 @@ public class EventListener {
 		User targetUser = event.getTargetUser();
 		
 		if( targetUser != null) {
-			if(event.getTargetUser().getEventIndicator()==false ) {	
+			if(targetUser.getEventIndicator()==false ) {	
 			AutowireHelper.autowire(this, this.userRepository);
 			userRepository.setEventIndicatorOfUser(true,event.getTargetUser().getId());
+			userRepository.setEventIndicatorOfUserInMemory(event.getTargetUser().getId(), true);
 		}
 		
 		}
@@ -35,9 +36,10 @@ public class EventListener {
 			User targetUser = event.getTargetUser();
 			
 			if(targetUser != null) {	
-				if(event.getTargetUser().getEventIndicator()==true ) {
+				if(targetUser.getEventIndicator()==true ) {
 				AutowireHelper.autowire(this, this.userRepository);
 				userRepository.setEventIndicatorOfUser(false,event.getTargetUser().getId()); //ha egyet törlök mindent törlök !!
+				userRepository.setEventIndicatorOfUserInMemory(event.getTargetUser().getId(), false);
 			}
 			
 			}
