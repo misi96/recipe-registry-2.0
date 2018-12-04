@@ -99,7 +99,7 @@ public class LikeControllerTest {
 		Integer postID = 666;
 		
 		String URI = "/posts/" + postID.toString() + "/like";
-		String outputInJson = this.mapToJson(mockLikeDTO);
+		String outputInJson = Skeleton.mapToJson(mockLikeDTO);
 		
 		Mockito.when(likeService.LikePost(Mockito.anyInt())).thenReturn(mockLikeDTO);
 				
@@ -117,7 +117,7 @@ public class LikeControllerTest {
 		Integer postID = 666;
 		
 		String URI = "/posts/" + postID.toString() + "/like";
-		String outputInJson = this.mapToJson(page);
+		String outputInJson = Skeleton.mapToJson(page);
 		
 		Mockito.when(likeService.GetLikes(Mockito.anyInt(), Mockito.any(Pageable.class))).thenReturn(page);
 				
@@ -135,7 +135,7 @@ public class LikeControllerTest {
 		Integer postID = 666;
 		
 		String URI = "/posts/" + postID.toString() + "/like";
-		String outputInJson = this.mapToJson(1);
+		String outputInJson = Skeleton.mapToJson(1);
 		
 		Mockito.when(likeService.DeleteLike(Mockito.anyInt(), Mockito.any(User.class))).thenReturn(1);
 				
@@ -154,13 +154,4 @@ public class LikeControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().json(outputInJson));
 	}
-	
-	
-	
-	private String mapToJson(Object object) throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.writeValueAsString(object);
-	}
-
-
 }

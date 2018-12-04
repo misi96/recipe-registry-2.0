@@ -110,8 +110,8 @@ public class CommentControllerTest {
 		//input.put("PostID", "1");
 		input.put("CommentDTO", mockCommentDTO1);
 		
-		String inputInJson = this.mapToJson(input);
-		String outputInJson = this.mapToJson(mockCommentDTO1);
+		String inputInJson = Skeleton.mapToJson(input);
+		String outputInJson = Skeleton.mapToJson(mockCommentDTO1);
 		
 		this.mockMvc
 			.perform(post(URI)
@@ -142,7 +142,7 @@ public class CommentControllerTest {
 	public void testGetCommentList() throws Exception {
 		
 		Integer postID = 10;
-		String outputInJson = this.mapToJson(page);
+		String outputInJson = Skeleton.mapToJson(page);
 		String URI = "/posts/" + postID + "/comments";
 		
 		Mockito.when(commentService.GetCommentList(Mockito.anyInt(), Mockito.any(Pageable.class))).thenReturn(page);
@@ -167,7 +167,7 @@ public class CommentControllerTest {
 		Integer commentID = 666;
 		Integer postID = 1;
 		Integer output = 1;
-		String outputInJson = this.mapToJson(output);
+		String outputInJson = Skeleton.mapToJson(output);
 		String URI = "/posts/" + postID.toString() + "/comments";
 		
 		Mockito.when(commentService.DeleteComment(Mockito.anyLong(), Mockito.anyLong(), Mockito.any(User.class))).thenReturn(output);
@@ -187,12 +187,4 @@ public class CommentControllerTest {
 				.andExpect(content().json(outputInJson));
 	}
 	
-	
-	
-	
-	
-	private String mapToJson(Object object) throws Exception {
-		ObjectMapper objectMapper = new ObjectMapper();
-		return objectMapper.writeValueAsString(object);
-	}
 }
