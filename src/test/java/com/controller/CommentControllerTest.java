@@ -1,14 +1,10 @@
 package com.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -21,7 +17,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,20 +24,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sec.SecApplication;
 import com.sec.DTO.CommentDTO;
 import com.sec.DTO.UserDTO;
@@ -65,8 +50,7 @@ public class CommentControllerTest {
 	private CommentDTO mockCommentDTO2 = new CommentDTO();
 	private User mockUser = new User();
 	private Page<CommentDTO> page;
-	//private String URI = "/posts/1/comment";
-	private static final ObjectMapper mapper=new ObjectMapper();
+	//private static final ObjectMapper mapper = new ObjectMapper();
 	
 	@Before
 	public void testInit() throws Exception {
@@ -96,6 +80,7 @@ public class CommentControllerTest {
 		page = new PageImpl<>(commentDTOs);
 	}
 	
+	
 	@Test
 	@WithMockUser
 	public void testCommentPost() throws Exception {
@@ -107,7 +92,6 @@ public class CommentControllerTest {
 		Mockito.when(commentService.AddCommentToPost(Mockito.anyLong(), Mockito.any(CommentDTO.class))).thenReturn(mockCommentDTO1);
 		
 		Map<String,Object> input = new HashMap<>();
-		//input.put("PostID", "1");
 		input.put("CommentDTO", mockCommentDTO1);
 		
 		String inputInJson = Skeleton.mapToJson(input);
@@ -121,20 +105,6 @@ public class CommentControllerTest {
 			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().json(outputInJson));
-		
-		
-		/*RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.post(URI)
-				.accept(MediaType.APPLICATION_JSON).content(inputInJson)
-				.contentType(MediaType.APPLICATION_JSON);
-		
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		MockHttpServletResponse response = result.getResponse();
-		
-		String outputInJson = response.getContentAsString();
-		
-		assertThat(outputInJson).isEqualTo(inputInJson);
-		assertEquals(HttpStatus.OK.value(), response.getStatus());*/
 	}
 
 	@Test
@@ -149,12 +119,8 @@ public class CommentControllerTest {
 		
 		this.mockMvc
 				.perform(get(URI)
-				//.param("PostID", "10")
 				.param("page", "3")
-				.param("size", "2")
-				.contentType(MediaType.APPLICATION_JSON)
-				//.content(outputInJson)
-				.accept(MediaType.APPLICATION_JSON))
+				.param("size", "2"))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().json(outputInJson));
@@ -177,11 +143,8 @@ public class CommentControllerTest {
 		//input.put("user", mockUser);
 		//input.put("commentID", commentID.toString());
 		this.mockMvc
-				.perform(delete(URI + "/" + commentID.toString())
+				.perform(delete(URI + "/" + commentID.toString()))
 				//.content(mapper.writeValueAsString(input))
-				.contentType(MediaType.APPLICATION_JSON)
-				//.content(outputInJson)
-				.accept(MediaType.APPLICATION_JSON))
 				.andDo(print())
 				.andExpect(status().isOk())
 				.andExpect(content().json(outputInJson));

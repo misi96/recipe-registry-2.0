@@ -40,6 +40,8 @@ public class FileControllerTest {
 	private FileService fileService;
 	
 	MockMultipartFile mockFile;
+	
+	
 	@Before
 	public void testInit() {
 		mockFile = new MockMultipartFile("files", "filename.txt", "text/plain", "hello".getBytes(StandardCharsets.UTF_8));
@@ -53,21 +55,18 @@ public class FileControllerTest {
 		
 		Integer postableID = 10;
 		String URI = "/recipes/" + postableID.toString() + "/pictures/main";
-		Boolean output = true;
 		String inputInJson = Skeleton.mapToJson(mockFile);
-		String outputInJson = Skeleton.mapToJson(output);
 		
-		Mockito.when(fileService.AddMainPictureToRecipe(Mockito.any(MultipartFile.class), Mockito.anyLong(), Mockito.any(User.class))).thenReturn(output);
+		Mockito.when(fileService.AddMainPictureToRecipe(Mockito.any(MultipartFile.class), Mockito.anyLong(), Mockito.any(User.class))).thenReturn(true);
 		
 		this.mockMvc
 				.perform(post(URI)
-				
-				//.content(outputInJson)
-				.accept(MediaType.APPLICATION_JSON))
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(inputInJson))
 				
 				.andDo(print())
 				.andExpect(status().isOk())
-				.andExpect(content().json(outputInJson));
+				.andExpect(content().string("true"));
 	}*/
 	
 }

@@ -1,7 +1,5 @@
 package com.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,10 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.junit.Before;
@@ -28,24 +24,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sec.SecApplication;
-import com.sec.DTO.CommentDTO;
 import com.sec.DTO.LikeDTO;
 import com.sec.DTO.RoleDTO;
 import com.sec.DTO.UserDTO;
 import com.sec.entity.User;
-import com.sec.service.CommentService;
 import com.sec.service.LikeService;
 
 @RunWith(SpringRunner.class)
@@ -93,6 +79,7 @@ public class LikeControllerTest {
 
 	}
 	
+	
 	@Test
 	@WithMockUser
 	public void testLikePost() throws Exception {
@@ -138,19 +125,9 @@ public class LikeControllerTest {
 		String outputInJson = Skeleton.mapToJson(1);
 		
 		Mockito.when(likeService.DeleteLike(Mockito.anyInt(), Mockito.any(User.class))).thenReturn(1);
-				
-		/*Map<String,Object> input = new HashMap<>();
-		input.put("PostID", "667");
-		input.put("User", mockUserDTO);*/
-		
-		//String inputInJson = this.mapToJson(input);
 		
 		this.mockMvc
 			.perform(delete(URI))
-					//.contentType(MediaType.APPLICATION_JSON)
-					//.content(inputInJson)
-					//.accept(MediaType.APPLICATION_JSON))
-			.andDo(print())
 			.andExpect(status().isOk())
 			.andExpect(content().json(outputInJson));
 	}
